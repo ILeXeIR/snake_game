@@ -4,6 +4,7 @@ import random
 from settings import Settings
 from field import Field
 from unit import Unit
+from worm import Worm
 
 class SnakeGame:
 	#Класс для управления ресурсами и поведением игры.
@@ -19,13 +20,15 @@ class SnakeGame:
 		self.clock = pygame.time.Clock()
 
 		self.field = Field(self)
-		self.snake = pygame.sprite.Group()
+		self.snake = Worm(self)
+
 
 	def run_game(self):
 		#Запускает один цикл игры
 
 		while True:
 			self._check_events()
+			self.snake.move_it()
 			self._update_screen()
 
 
@@ -39,27 +42,46 @@ class SnakeGame:
 				#Реагирует на нажатия клавиш.
 				if event.key == pygame.K_ESCAPE:
 					sys.exit()
+				if event.key == pygame.K_c:
+					self._creat_snake()
+				if event.key == pygame.K_UP and not self.snake.d_flag:
+					self.snake.u_flag = True
+					self.snake.l_flag = False
+					self.snake.r_flag = False
+				if event.key == pygame.K_DOWN and not self.snake.u_flag:
+					self.snake.d_flag = True
+					self.snake.l_flag = False
+					self.snake.r_flag = False
+				if event.key == pygame.K_RIGHT and not self.snake.l_flag:
+					self.snake.r_flag = True
+					self.snake.u_flag = False
+					self.snake.d_flag = False
+				if event.key == pygame.K_LEFT and not self.snake.r_flag:
+					self.snake.l_flag = True
+					self.snake.u_flag = False
+					self.snake.d_flag = False
 
 	def _creat_snake(self):
 		#Создает новую змейку.
 
-		unit = Unit(self)
-		#unit.rect = self.field.coordinates[10][10]
-		unit.rect.center = self.field.rect.center
-
-		self.snake.add(unit)
+		for i in range(3):
+			unit = Unit(self)
+			unit.x_cell = 10
+			unit.y_cell = 19 - i
+			unit.rect.topleft = self.field.coordinates[unit.x_cell][unit.y_cell]
+			self.snake.append(unit)
 
 	def _update_screen(self):
 		#Обновляет изображения на экране, отображает экран.
 
 		self.screen.fill((0, 0, 0))
 		self.field.draw_field()
-		for unit in self.snake.sprites():
+		for unit in self.snake:
 			unit.draw_unit()
 
 		#Отображение последнего прорисованного экрана.
 		pygame.display.flip()
-		self.clock.tick(30)
+		self.clock.tick(self.settings.speed)
 
 
 if __name__ == '__main__':

@@ -14,13 +14,15 @@ class Field():
 		self.rect = pygame.Rect(0, 0, self.length, self.length)
 		self.rect.center = self.screen_rect.center
 
+		#Деления поля на клетки, присвоение им координат
 		self.coordinates = []
 		x, y = self.rect.x, self.rect.y
 		for i in range(sg.settings.u_length):
 			self.coordinates.append([])
+			y1 = y
 			for j in range(sg.settings.u_length):
-				self.coordinates[i].append((x, y))
-				y += self.unit_length
+				self.coordinates[i].append((x, y1))
+				y1 += self.unit_length
 			x += self.unit_length
 
 	def draw_field(self):
