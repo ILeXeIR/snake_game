@@ -5,6 +5,8 @@ from settings import Settings
 from field import Field
 from unit import Unit
 from worm import Worm
+from game_stats import GameStats
+from scoreboard import ScoreBoard
 
 class SnakeGame:
 	#Класс для управления ресурсами и поведением игры.
@@ -14,11 +16,12 @@ class SnakeGame:
 
 		pygame.init()
 		self.settings = Settings()
+		self.stats = GameStats()
 		self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 		self.screen_width, self.screen_height = pygame.display.get_desktop_sizes()[0]
 		pygame.display.set_caption('Snake Game')
 		self.clock = pygame.time.Clock()
-
+		self.sb = ScoreBoard(self)
 		self.field = Field(self)
 		self.snake = Worm(self)
 		self.stop_game = True
@@ -71,6 +74,7 @@ class SnakeGame:
 					if event.key == pygame.K_UP and self.game_prepared:
 						self.stop_game = False
 						self.game_prepared = False
+						pygame.mouse.set_visible(False)
 						self.snake.u_flag = True
 
 
@@ -100,6 +104,7 @@ class SnakeGame:
 				break
 		self.free_unit.rect.topleft = \
 			self.field.coordinates[self.free_unit.x_cell][self.free_unit.y_cell]
+		
 
 
 
@@ -111,6 +116,8 @@ class SnakeGame:
 		self.snake.l_flag = False
 		self.snake.r_flag = False
 		self.stop_game = True
+		self.stats.check_record()
+		pygame.mouse.set_visible(True)
 
 	def prepare_new_game(self):
 		#Создать новую игру, но не запускать ее
@@ -118,6 +125,8 @@ class SnakeGame:
 		self.snake.clear()
 		self._create_snake()
 		self._create_free_unit()
+		self.settings.speed = 5
+		self.stats.reset_stats()
 		self.game_prepared = True
 
 
@@ -126,6 +135,7 @@ class SnakeGame:
 
 		self.screen.fill((0, 0, 0))
 		self.field.draw_field()
+		self.sb.update()
 		for unit in self.snake:
 			unit.draw_unit()
 		self.free_unit.draw_unit()

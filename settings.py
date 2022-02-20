@@ -6,4 +6,4 @@ class Settings():
 
 		#Высота поля в юнитах
 		self.u_length = 20
-		self.speed = 10
+		self.speed = 5

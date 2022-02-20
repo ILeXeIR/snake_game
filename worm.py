@@ -55,3 +55,5 @@ class Worm(list):
 			self.snake_game.free_unit.color = (0, 200, 0)
 			self.insert(0, self.snake_game.free_unit)
 			self.snake_game._create_free_unit()
+			self.snake_game.stats.score += int(20 * self.snake_game.settings.speed) 
+			self.snake_game.settings.speed += 0.5
